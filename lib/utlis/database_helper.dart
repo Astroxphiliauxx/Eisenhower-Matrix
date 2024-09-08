@@ -1,14 +1,16 @@
+import 'dart:convert';
+import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-
-
 import '../modal/note.dart';
+
 
 class DatabaseHelper {
 
-  static late DatabaseHelper _databaseHelper; // Singleton DatabaseHelper
+  static late DatabaseHelper _databaseHelper; // Singleton DatabaseHelper, now you can use this in entire application.....A singleton pattern ensures that only one instance of a class exists throughout the application.
   static late Database _database; // Singleton Database
 
   String noteTable = 'note_table';
@@ -17,6 +19,9 @@ class DatabaseHelper {
   String colDescription = 'description';
   String colPriority = 'priority';
   String colDate = 'date';
+  String passwordTable = 'passwords_table';
+  String colPassword = 'password'; // Hashed password storage
+  String colSalt = 'salt';
 
   DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
@@ -45,6 +50,46 @@ class DatabaseHelper {
         'CREATE TABLE $noteTable($colId INTEGER PRIMARY KEY AUTOINCREMENT, $colTitle TEXT, '
             '$colDescription TEXT, $colPriority INTEGER, $colDate TEXT)'
     );
+    await db.execute(
+        'CREATE TABLE $passwordTable($colPassword TEXT, $colSalt TEXT)'
+    );
+  }
+
+  Future<void> storePassword(String password) async {
+
+    final salt = generateSalt();
+    final hashedPassword = hashPassword(password, salt);
+
+    final db = await database;
+    await db.transaction((txn) async {
+      await txn.delete(passwordTable);  //ensures only one password exists
+      await txn.insert(passwordTable, {'password': hashedPassword, 'salt': salt});
+    });
+  }
+
+  String generateSalt() {
+    final randomBytes = List<int>.generate(16, (index) => Random().nextInt(256));
+    return base64Encode(randomBytes);
+  }
+  String hashPassword(String password, String salt) {
+    final bytes = utf8.encode(password + salt);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  Future<bool> authenticatePassword(String password) async {
+    final db = await database;
+    final result = await db.query(passwordTable);
+
+    if (result.isNotEmpty) {
+      final storedPassword = result.first[colPassword];
+      final storedSalt = result.first[colSalt] as String;
+
+      final hashedEnteredPassword = hashPassword(password, storedSalt);
+      return hashedEnteredPassword == storedPassword;
+    }
+
+    return false;
   }
 
   // Fetch Operation: Get all note objects from database
