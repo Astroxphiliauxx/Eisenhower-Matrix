@@ -10,8 +10,9 @@ import '../modal/note.dart';
 
 class DatabaseHelper {
 
-  static late DatabaseHelper _databaseHelper; // Singleton DatabaseHelper, now you can use this in entire application.....A singleton pattern ensures that only one instance of a class exists throughout the application.
-  static late Database _database; // Singleton Database
+  static  DatabaseHelper? _databaseHelper; // Singleton DatabaseHelper, now you can use this in entire application.....A singleton pattern ensures that only one instance of a class exists throughout the application.
+  static  Database? _database; // Singleton Database
+
 
   String noteTable = 'note_table';
   String colId = 'id';
@@ -26,13 +27,18 @@ class DatabaseHelper {
   DatabaseHelper._createInstance(); // Named constructor to create instance of DatabaseHelper
 
   factory DatabaseHelper() {
-    _databaseHelper = DatabaseHelper._createInstance(); // This is executed only once, singleton object
-    return _databaseHelper;
+    _databaseHelper ??= DatabaseHelper._createInstance();
+    return _databaseHelper!;
+  }
+
+  static DatabaseHelper get instance {
+    _databaseHelper ??= DatabaseHelper._createInstance();
+    return _databaseHelper!;
   }
 
   Future<Database> get database async {
-    _database = await initializeDatabase();
-    return _database;
+    _database ??= await initializeDatabase();
+    return _database!;
   }
 
   Future<Database> initializeDatabase() async {
