@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:noteapp/screens/note_detail.dart';
 import 'package:noteapp/utlis/database_helper.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../modal/note.dart';
+import '../modal/note_list_state.dart';
 
 
 class NoteList extends StatefulWidget {
@@ -17,11 +19,13 @@ class NoteList extends StatefulWidget {
 
 class _NoteListState extends State<NoteList> {
   DatabaseHelper dataBaseHelper = DatabaseHelper();
+
    List<Note> noteList=[];
-  int count=0;
+   int count=0;
 
   @override
   Widget build(BuildContext context) {
+
 
     if(noteList.isEmpty) {
       updateListView();
@@ -35,6 +39,7 @@ class _NoteListState extends State<NoteList> {
               color: Colors.black,
       
             ),
+
             backgroundColor: Colors.blueGrey,
             title: Text('The Eisenhower Matrix',
             textAlign: TextAlign.left),
@@ -176,8 +181,11 @@ class _NoteListState extends State<NoteList> {
     );
   }
   ListView getNoteListView(){
-     return ListView.builder(
-        itemCount: count,
+    final noteListState = Provider.of<NoteListState>(context, listen: false);
+
+    return ListView.builder(
+
+     itemCount: count,
         itemBuilder: (BuildContext context, int position){
 
           return Card(
@@ -186,7 +194,7 @@ class _NoteListState extends State<NoteList> {
               borderRadius: BorderRadius.circular(15),
               // Sets the border radius to 30
             ),
-           
+
             //color: Color.fromARGB(0.1, 12, 12, 1),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(15), // Ensures the child respects the border radius
@@ -203,11 +211,24 @@ class _NoteListState extends State<NoteList> {
                   ),
                   title: Text(this.noteList[position].title),
                   subtitle: Text(this.noteList[position].date),
-                  trailing: IconButton(
-                    onPressed: () {
-                      cupertinoDialogDelete("Delete", "You want to delete this note?", position);
-                    },
-                    icon: Icon(Icons.delete),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          cupertinoDialogDelete("Delete", "You want to delete this note?", position);
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                         noteListState.toggleNoteLock(position);
+                        },
+                        icon: const Icon(Icons.lock_open_rounded),
+                      ),
+
+
+                    ],
                   ),
                 ),
               ),
