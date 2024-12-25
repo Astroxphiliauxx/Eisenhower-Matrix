@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noteapp/screens/note_list.dart';
-
+import 'package:noteapp/view/note_list.dart';
+import 'package:noteapp/viewmodels/note_list_state.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,22 +10,24 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'NoteApp',
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => NoteListState()),
 
-      theme: ThemeData(
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'NoteApp',
+        theme: ThemeData(
           primaryColor: Colors.black,
-          textTheme: TextTheme( ),
-          primarySwatch: Colors.blue),
-      home: NoteList(),
-
-
-
+          textTheme: const TextTheme(),
+          primarySwatch: Colors.blue,
+        ),
+        // home: const PasswordInputScreen1(),
+        home: NoteList(),
+      ),
     );
   }
 }
-

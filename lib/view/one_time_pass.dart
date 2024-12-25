@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noteapp/screens/password_input.dart';
-import '../utlis/database_helper.dart';
+import 'package:noteapp/view/password_input.dart';
+
+import '../services/database_helper.dart';
 
 
 class PasswordInputScreen1 extends StatefulWidget {

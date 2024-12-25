@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:noteapp/screens/note_detail.dart';
-import 'package:noteapp/utlis/database_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
-
-import '../modal/note.dart';
-import '../modal/note_list_state.dart';
+import '../models/note.dart';
+import '../services/database_helper.dart';
+import '../viewmodels/note_list_state.dart';
+import 'note_detail.dart';
 
 
 class NoteList extends StatefulWidget {

@@ -2,8 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:noteapp/utlis/database_helper.dart';
-import '../modal/note.dart';
+import '../models/note.dart';
+import '../services/database_helper.dart';
 
 class NoteDetail extends StatefulWidget {
 
